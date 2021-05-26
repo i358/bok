@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  </head>
+  <body>
+ <div id="messages">
+   
+    </div>
+    <br>
+     <input id="name" name="name" placeholder="adın ne aq" />
+     <input id="message" name="message" placeholder="mesaj gönder aq" />
+  
+</html>
+<script>
+$("#message").on('keypress',function(e) {
+    if(e.which == 13) {
+      var ztn = $("#message").val()
+       
+      
+     $.ajax({
+  type: "POST",
+  beforeSend: function(request) {
+    request.setRequestHeader("data", JSON.stringify({user:{name:$("#name").val()}, message:{content:ztn}}));
+  },
+  url: "getToken",
+  processData: false,
+  success: function(token) {
+     $("#message").prop("value", "")
+     $.ajax({
+  type: "POST",
+  beforeSend: function(request) {
+   
+    request.setRequestHeader("Authorization", JSON.stringify(token.Authorization));
+  },
+  url: "send",
+  processData: false,
+  success: function(res) {
+    var data = res
+    $("#messages").append("<b>"+JSON.stringify(data.user.name).replace('"', '').replace('"', '')+"</b> : "+JSON.stringify(data.message.content).replace('"', '').replace('"', '')+"<br>")
+  
+  }
+});
+  }
+});
+    }
+    
+});
+</script>
